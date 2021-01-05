@@ -1,3 +1,6 @@
+from src.NodeLocation import NodeLocation
+
+
 class NodeData:
 
     # Constructor:
@@ -34,3 +37,5 @@ class NodeData:
             return '{ID:' + self.__key.__str__() + '}'
         else:
             return '{ID:' + self.__key.__str__() + ', Location:' + self.__location.__str__() + '}'
+
+
