@@ -3,12 +3,13 @@ import math
 
 class NodeLocation:
 
-    # Constructor:
+    def __init__(self, pos=None):
 
-    def __init__(self, x: float, y: float, z: float):
-        self.__x = x
-        self.__y = y
-        self.__z = z
+        # Constructor: 
+
+        self.__x = pos[0]
+        self.__y = pos[1]
+        self.__z = pos[2]
 
     def get_x(self):
         return self.__x
@@ -59,5 +60,3 @@ class NodeLocation:
 
     def __repr__(self):
         str(self)
-
-
