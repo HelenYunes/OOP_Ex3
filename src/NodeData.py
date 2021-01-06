@@ -5,10 +5,15 @@ class NodeData:
 
     # Constructor:
 
-    def __init__(self, key: int, distance: float, location: () = None):
+    def __init__(self, key: int, distance: float, tag=0, info="", pos=None, w=1):
         self.__key: int = key
-        self.__location: NodeLocation = NodeLocation()
-        self.__location.set_point(location)
+        self.tag = tag
+        self.info = info
+        self.weight = w
+        if pos is not None:
+            self.__location = NodeLocation()(pos)
+        else:
+            self.__location = None
         self.__distance: float = distance
 
     def get_location(self) -> NodeLocation:
