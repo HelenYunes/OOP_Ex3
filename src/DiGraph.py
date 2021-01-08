@@ -3,7 +3,6 @@ from src.NodeData import NodeData
 
 
 class DiGraph(GraphInterface):
-
     """This class represents a graph."""
 
     def __init__(self):
@@ -96,7 +95,9 @@ class DiGraph(GraphInterface):
         @return: True if the node was removed successfully, False o.w.
         Note: if the node id does not exists the function will do nothing
         """
-        if node_id in self.Nodes:
+        if node_id not in self.Nodes:
+            return False
+        else:
             for edge in list(self.all_in_edges_of_node(node_id).keys()):
                 self.remove_edge(edge, node_id)
 
@@ -109,7 +110,6 @@ class DiGraph(GraphInterface):
             self.__mc += 1
             self.__nodeSize -= 1
             return True
-        return False
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
         """
