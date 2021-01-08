@@ -161,6 +161,8 @@ class GraphAlgo(GraphAlgoInterface):
             return scc
         list_visit = []
         nodes = self.graph.get_all_v()
+        if id1 not in nodes:
+            return scc
         self.reset_data(nodes)
         current_node, after_dfs_scc, list_visit = self.dfs_scc(scc, nodes, count, node1, list_visit, self.graph)
         if current_node.get_connected_components() == current_node.get_counter():
