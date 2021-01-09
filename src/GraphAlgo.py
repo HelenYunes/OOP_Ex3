@@ -1,16 +1,16 @@
 import json
-import math
 from queue import PriorityQueue
+import math
 from typing import List
-
 from src.DiGraph import DiGraph
-from src import GraphInterface
 from src.GraphAlgoInterface import GraphAlgoInterface
+from src.GraphFrame import GraphFrame
+from src.GraphInterface import GraphInterface
 from src.NodeData import NodeData
 
 
 class GraphAlgo(GraphAlgoInterface):
-    """This class represents a graph."""
+    """This class represents a directed (positive) weighted graph theory algorithms."""
 
     def __init__(self, graph: GraphInterface = None):
         super()
@@ -79,12 +79,11 @@ class GraphAlgo(GraphAlgoInterface):
                         edges.append({"src": source, "dest": destination, "w": weight})
                 data = {"Nodes": nodes, "Edges": edges}
                 json.dump(data, file)
+                file.close()
                 return True
             except Exception as exception:
                 print(exception)
                 return False
-            finally:
-                file.close()
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """
@@ -127,24 +126,6 @@ class GraphAlgo(GraphAlgoInterface):
             node2 = nodes[p]
             p = node2.get_parent()
         return nodes[id2].get_tag(), path
-
-    def dijkstra(self, nodes: dict, id1: int, id2: int) -> (float, list):
-        node1 = nodes[id1]
-        node1.set_parent(-5)
-        queue = PriorityQueue()
-        queue.put(node1)
-        for node in nodes.values():
-            node.set_tag(math.inf)
-        node1.set_tag(0)
-        while not (queue.empty()):
-            vertex = queue.get()
-            edges_out = self.graph.all_out_edges_of_node(vertex.get_key())
-            for key, weight in edges_out.items():
-                if vertex.get_tag() + weight < nodes[key].get_tag():
-                    queue.put(nodes[key])
-                    nodes[key].set_tag(vertex.get_tag() + weight)
-                    nodes[key].set_parent(vertex.get_key())
-        return nodes[id2].get_tag()
 
     def connected_component(self, id1: int) -> list:
         """
@@ -208,7 +189,32 @@ class GraphAlgo(GraphAlgoInterface):
         Otherwise, they will be placed in a random but elegant manner.
         @return: None
         """
-        # not implemented yet
+        GraphFrame(self.graph).draw_graph()
+
+    def __eq__(self, other):
+        if type(other) is not GraphAlgo:
+            return False
+        if self.graph.__eq__(GraphAlgo.get_graph(other)):
+            return True
+        return False
+
+    def dijkstra(self, nodes: dict, id1: int, id2: int) -> (float, list):
+        node1 = nodes[id1]
+        node1.set_parent(-5)
+        queue = PriorityQueue()
+        queue.put(node1)
+        for node in nodes.values():
+            node.set_tag(math.inf)
+        node1.set_tag(0)
+        while not (queue.empty()):
+            vertex = queue.get()
+            edges_out = self.graph.all_out_edges_of_node(vertex.get_key())
+            for key, weight in edges_out.items():
+                if vertex.get_tag() + weight < nodes[key].get_tag():
+                    queue.put(nodes[key])
+                    nodes[key].set_tag(vertex.get_tag() + weight)
+                    nodes[key].set_parent(vertex.get_key())
+        return nodes[id2].get_tag()
 
     def reset_data(self, nodes):
         for node in nodes.values():
