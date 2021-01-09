@@ -111,11 +111,11 @@ class GraphAlgo(GraphAlgoInterface):
 
         path = []
         nodes = self.graph.get_all_v()
+        if id1 not in nodes or id2 not in nodes:
+            return math.inf, None
         if id1 == id2:
             path.append(id2)
             return 0, path
-        if id1 not in nodes or id2 not in nodes:
-            return math.inf, None
         self.reset_data(nodes)
         distance = self.dijkstra(nodes, id1, id2)
         if distance == math.inf:
