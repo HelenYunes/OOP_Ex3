@@ -128,3 +128,21 @@ class DiGraph(GraphInterface):
             self.__edgeSize -= 1
             return True
         return False
+
+    def get_node(self, key: int) -> NodeData:
+        return self.Nodes.get(key)
+
+    def __eq__(self, other):
+        if type(other) is not DiGraph:
+            return False
+        if self.e_size() != DiGraph.e_size(other):
+            return False
+        if self.v_size() != DiGraph.v_size(other):
+            return False
+        for node in self.Nodes.values():
+            if NodeData.get_key(node) not in DiGraph.get_all_v(other).keys():
+                return False
+        return True
+
+    def __repr__(self):
+        return f"Graph: |V|={self.v_size()} , |E|={self.e_size()}"
