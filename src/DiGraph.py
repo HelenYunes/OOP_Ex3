@@ -80,7 +80,7 @@ class DiGraph(GraphInterface):
         Note: if the node id already exists the node will not be added
         """
         if node_id not in self.Nodes:
-            self.Nodes[node_id] = NodeData(node_id, pos)
+            self.Nodes[node_id] = NodeData(key=node_id, pos=pos)
             self.Edges_in.__setitem__(node_id, {})
             self.Edges_out.__setitem__(node_id, {})
             self.__mc += 1
