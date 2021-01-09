@@ -14,7 +14,7 @@ class GraphAlgo(GraphAlgoInterface):
 
     def __init__(self, graph: GraphInterface = None):
         super()
-        self.graph = graph
+        self.graph: DiGraph = graph
 
     def get_graph(self) -> GraphInterface:
         """
@@ -38,7 +38,11 @@ class GraphAlgo(GraphAlgoInterface):
                     new_graph.add_node(key1, None)
                 else:
                     pos = node["pos"]
-                    new_graph.add_node(key1, pos)
+                    x, y, z = str.split(pos, ",")
+                    x = float(x)
+                    y = float(y)
+                    z = float(z)
+                    new_graph.add_node(key1, (x, y, z))
             for edge in json_file["Edges"]:
                 source = edge["src"]
                 destination = edge["dest"]
