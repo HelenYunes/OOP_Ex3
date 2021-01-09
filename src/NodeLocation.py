@@ -5,14 +5,20 @@ class NodeLocation:
 
     def __init__(self, pos=None):
 
-        # Constructor: 
-
-        self.__x = pos[0]
-        self.__y = pos[1]
-        self.__z = pos[2]
+        # Constructor:
+        try:
+            self.__x = pos[0]
+            self.__y = pos[1]
+            self.__z = pos[2]
+            self.pos = (self.__x, self.__y, self.__z)
+        except TypeError:
+            print("TypeError")
 
     def get_x(self):
         return self.__x
+
+    def get_pos(self):
+        return self.pos
 
     def set_x(self, x):
         self.__x = x
@@ -51,9 +57,9 @@ class NodeLocation:
         return math.sqrt(t)
 
     def get_point(self):
-        if self.__x is None and self.__y is None and self.__z is None:
+        if self.get_x is None and self.get_y is None and self.get_y is None:
             return None
-        return self.__x, self.__y, self.__z
+        return self.get_x, self.get_y, self.get_z
 
     def __str__(self):
         return f" ({self.__x},{self.__y},{self.__z})"
