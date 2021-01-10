@@ -38,6 +38,9 @@ class GraphAlgo(GraphAlgoInterface):
                     new_graph.add_node(key1, None)
                 else:
                     pos = node["pos"]
+
+                    pos = pos.replace("(", "").replace(")", "")
+
                     x, y, z = str.split(pos, ",")
                     x = float(x)
                     y = float(y)
@@ -65,24 +68,22 @@ class GraphAlgo(GraphAlgoInterface):
             try:
                 vertices = self.graph.get_all_v().values()
                 in_edges = self.graph.Edges_in.keys()
-                data = {"Edges": [], "Nodes": []}
-                nodes = data["Nodes"]
-                edges = data["Edges"]
-
+                nodes = []
+                edges = []
                 for node in vertices:
                     key = node.get_key()
                     if node.get_location() is None:
                         nodes.append({"id": key})
                     else:
                         if node.get_location() is not None:
-                            pos = str(node.get_location())
+                            pos = node.get_location().__str__()
                             nodes.append({"pos": pos, "id": key})
                 for destination in in_edges:
                     edges_in = self.graph.all_in_edges_of_node(destination)
                     for source, weight in edges_in.items():
                         edges.append({"src": source, "dest": destination, "w": weight})
-                data = {"Nodes": nodes, "Edges": edges}
-                json.dump(data, file)
+
+                json.dump({"Edges": edges, "Nodes": nodes}, file)
                 file.close()
                 return True
             except Exception as exception:
@@ -115,20 +116,21 @@ class GraphAlgo(GraphAlgoInterface):
 
         path = []
         nodes = self.graph.get_all_v()
-        if id1 not in nodes or id2 not in nodes:
+        if id1 not in nodes.keys() or id2 not in nodes.keys():
             return math.inf, None
         if id1 == id2:
             path.append(id2)
             return 0, path
         self.reset_data(nodes)
-        distance = self.dijkstra(nodes, id1, id2)
+        nodes = self.dijkstra(nodes, id1)
+        distance = nodes[id2].get_tag()
         if distance == math.inf:
             return math.inf, None
-        p = id2
-        while p != -5:
-            path.insert(0, nodes[p])
-            node2 = nodes[p]
-            p = node2.get_parent()
+        destination = id2
+        while destination != -5:
+            next_node = nodes[destination]
+            destination = next_node.get_parent()
+            path.insert(0, next_node.get_key())
         return nodes[id2].get_tag(), path
 
     def connected_component(self, id1: int) -> list:
@@ -141,24 +143,19 @@ class GraphAlgo(GraphAlgoInterface):
         """
         node1 = self.graph.get_all_v().get(id1)
         count = 0
+        scc1 = []
         scc = []
+        after_dfs_scc = []
         if self.graph is None:
             return scc
         list_visit = []
         nodes = self.graph.get_all_v()
-        if id1 not in nodes:
+        if id1 not in nodes.keys():
             return scc
         self.reset_data(nodes)
-        current_node, after_dfs_scc, list_visit = self.dfs_scc(scc, nodes, count, node1, list_visit, self.graph)
-        if current_node.get_connected_components() == current_node.get_counter():
-            while list_visit.__len__() > 0:
-                this_node: NodeData = list_visit.pop()
-                after_dfs_scc.insert(0, this_node)
-                this_node.set_info("no")
-                if this_node == current_node:
-                    break
-            scc.append(after_dfs_scc)
-        return scc
+        after_dfs_scc, scc1 = self.dfs_scc(scc, nodes, count, node1, list_visit)
+
+        return scc1
 
     def connected_components(self) -> List[list]:
         """
@@ -168,6 +165,9 @@ class GraphAlgo(GraphAlgoInterface):
         If the graph is None the function should return an empty list []
         """
         scc = []
+        scc1 = []
+        count = 0
+        after_dfs_scc = []
         if self.graph is None:
             return scc
         list_visit = []
@@ -175,16 +175,9 @@ class GraphAlgo(GraphAlgoInterface):
         self.reset_data(nodes)
         for node in nodes.values():
             if node.get_counter() is None:
-                current_node, after_dfs_scc, list_visit = self.dfs_scc(scc, nodes, 0, node, list_visit, self.graph)
-                if current_node.get_connected_components() == current_node.get_counter():
-                    while list_visit.__len__() > 0:
-                        this_node = list_visit.pop()
-                        after_dfs_scc.insert(0, this_node)
-                        this_node.set_info("no")
-                        if this_node == current_node:
-                            break
-                    scc.append(after_dfs_scc)
-        return scc
+                after_dfs_scc, scc1 = self.dfs_scc(scc, nodes, count, node, list_visit)
+
+        return after_dfs_scc
 
     def plot_graph(self) -> None:
         """
@@ -202,7 +195,15 @@ class GraphAlgo(GraphAlgoInterface):
             return True
         return False
 
-    def dijkstra(self, nodes: dict, id1: int, id2: int) -> (float, list):
+    def reset_data(self, nodes):
+        for node in nodes.values():
+            node.set_tag(math.inf)
+            node.set_info("no")
+            node.set_parent(None)
+            node.set_counter(None)
+            node.set_connected_components(None)
+
+    def dijkstra(self, nodes: dict, id1: int) -> list:
         node1 = nodes[id1]
         node1.set_parent(-5)
         queue = PriorityQueue()
@@ -216,35 +217,35 @@ class GraphAlgo(GraphAlgoInterface):
                     queue.put(nodes[key])
                     nodes[key].set_tag(vertex.get_tag() + weight)
                     nodes[key].set_parent(vertex.get_key())
-        return nodes[id2].get_tag()
+        return nodes
 
-    def reset_data(self, nodes):
-        for node in nodes.values():
-            node.set_tag(math.inf)
-            node.set_info("no")
-            node.set_parent(None)
-            node.set_counter(None)
-            node.set_connected_components(None)
-
-    def dfs_scc(self, scc_list: [], nodes: [], count: int, current_node: NodeData, list_visit: [],
-                graph: GraphInterface):
+    def dfs_scc(self, scc_from: [], nodes: [], count: int, current_node: NodeData, list_visit: []):
 
         current_key = current_node.get_key()
-        out_edges = graph.all_out_edges_of_node(current_key)
-        after_dfs_scc = []
+        out_edges = self.graph.all_out_edges_of_node(current_key)
         current_node.set_connected_components(count)
         current_node.set_counter(count)
         count += 1
+        scc = []
         current_node.set_info("yes")
         list_visit.append(current_node)
-        for vertex in ([nodes[destination]] for destination in out_edges):
+        for vertex in list([nodes[destination]] for destination in out_edges):
             node = vertex.pop()
             if node.get_counter() is not None:
                 if node.get_info().__eq__("yes"):
                     num = min(current_node.get_connected_components(), node.get_counter())
                     current_node.set_connected_components(num)
             else:
-                self.dfs_scc(scc_list, nodes, count, node, list_visit, graph)
-                num = min(current_node.get_connected_components(), node.get_connected_components())
-                current_node.set_connected_components(num)
-        return current_node, after_dfs_scc, list_visit
+                if node.get_counter() is None:
+                    self.dfs_scc(scc_from, nodes, count, node, list_visit)
+                    num = min(current_node.get_connected_components(), node.get_connected_components())
+                    current_node.set_connected_components(num)
+        if current_node.get_connected_components() == current_node.get_counter():
+            while list_visit.__len__() > 0:
+                this_node = list_visit.pop()
+                scc.insert(0, this_node.get_key())
+                this_node.set_info("no")
+                if this_node == current_node:
+                    break
+            scc_from.append(scc)
+        return scc_from, scc
