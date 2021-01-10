@@ -207,8 +207,6 @@ class GraphAlgo(GraphAlgoInterface):
         node1.set_parent(-5)
         queue = PriorityQueue()
         queue.put(node1)
-        for node in nodes.values():
-            node.set_tag(math.inf)
         node1.set_tag(0)
         while not (queue.empty()):
             vertex = queue.get()
