@@ -63,7 +63,8 @@ class DiGraph(GraphInterface):
         @return: True if the edge was added successfully, False o.w.
         Note: If the edge already exists or one of the nodes dose not exists the functions will do nothing
         """
-        if id1 in self.Nodes and id2 in self.Nodes and id2 not in self.Edges_out[id1] and weight >= 0 and id1 != id2:
+        nodes = self.get_all_v().keys()
+        if id1 in nodes and id2 in nodes and id2 not in self.Edges_out[id1] and weight >= 0 and id1 != id2:
             self.Edges_in[id2][id1] = weight
             self.Edges_out[id1][id2] = weight
             self.__mc += 1
@@ -80,6 +81,7 @@ class DiGraph(GraphInterface):
         Note: if the node id already exists the node will not be added
         """
         if node_id not in self.Nodes:
+
             self.Nodes[node_id] = NodeData(key=node_id, pos=pos)
             self.Edges_in.__setitem__(node_id, {})
             self.Edges_out.__setitem__(node_id, {})
