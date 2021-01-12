@@ -1,25 +1,20 @@
-from src.NodeLocation import NodeLocation
-
 
 class NodeData(object):
 
     # Constructor:
 
-    def __init__(self, key: int, tag=0, pos: tuple = None, w=1):
+    def __init__(self, key: int, tag=0, w=1, pos: tuple = None):
         self.__key: int = key
         self.__tag = tag
         self.__info = "no"
-        self.__weight = w
         self.__parent = None
-        self.__counter = None
-        self.__connected_components = None
+        self.__location = pos
         if pos is not None:
-            self.__location = NodeLocation(pos).get_pos()
-        else:
-            self.__location = None
+            self.__x = pos[0]
+            self.__y = pos[1]
+            self.__z = pos[2]
 
     def get_location(self) -> [tuple]:
-
         return self.__location
 
     def set_location(self, x, y, z):
@@ -48,18 +43,6 @@ class NodeData(object):
 
     def set_info(self, info: str):
         self.__info = info
-
-    def get_counter(self) -> int:
-        return self.__counter
-
-    def set_counter(self, index: int):
-        self.__counter = index
-
-    def get_connected_components(self) -> int:
-        return self.__connected_components
-
-    def set_connected_components(self, connected_components: int):
-        self.__connected_components = connected_components
 
     def __repr__(self):
         if self.__location is None:
