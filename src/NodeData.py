@@ -3,7 +3,7 @@ class NodeData(object):
 
     # Constructor:
 
-    def __init__(self, key: int, tag=0, w=1, pos: tuple = None):
+    def __init__(self, key: int, tag=0, pos: tuple = None):
         self.__key: int = key
         self.__tag = tag
         self.__info = "no"
