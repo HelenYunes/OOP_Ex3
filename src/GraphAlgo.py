@@ -116,7 +116,7 @@ class GraphAlgo(GraphAlgoInterface):
         path = []
         nodes = self.graph.get_all_v()
         if id1 not in nodes or id2 not in nodes:
-            return math.inf, None
+            return math.inf, path
         if id1 == id2:
             path.append(id2)
             return 0, path
@@ -218,19 +218,23 @@ class GraphAlgo(GraphAlgoInterface):
                     nodes[key].set_parent(vertex.get_key())
         return nodes
 
-    def dfs_scc(self, cc, scc_from, nodes, count: int, current_node, list_visit, nodes_after_scc,
+    def dfs_scc(self, cc, from_scc, nodes, count: int, current_node, list_visit, nodes_after_scc,
                 num_connected_components, scc):
         list_visit = [current_node]
         i = 0
+       
         while len(list_visit) > 0:
             current_node = list_visit[len(list_visit) - 1]
-            if current_node not in nodes_after_scc:
+            if current_node in nodes_after_scc:
+                pass
+            else:
                 vertex = nodes.get(current_node)
                 vertex_key = [vertex.get_key()]
-                nodes_after_scc[current_node] = count
-                scc[count] = vertex_key
-                num_connected_components[current_node] = count
+                nodes_after_scc.update({current_node: count})
+                scc.update({count: vertex_key})
+                num_connected_components.update({current_node: count})
                 count = count + 1
+
                 # print(vertex_key)
             edges = self.graph.all_out_edges_of_node(current_node)
             flag_visited = 1
@@ -242,24 +246,25 @@ class GraphAlgo(GraphAlgoInterface):
                     break
             if flag_visited == 1:
                 list_visit.pop()
-                current_cc = num_connected_components[current_node]
+                current_cc = num_connected_components.__getitem__(current_node)
                 for j in edges:
-                    if j in num_connected_components and j not in scc_from:
+                    if j in num_connected_components and j not in from_scc:
                         a = num_connected_components.__getitem__(current_node)
                         b = num_connected_components.__getitem__(j)
                         num_min_connected = min(a, b)
-                        num_connected_components[current_node] = num_min_connected
+                        num_connected_components.update({current_node: num_min_connected})
                 a = num_connected_components.__getitem__(current_node)
                 b = nodes_after_scc.__getitem__(current_node)
                 if a != b:
                     if a not in scc:
-                        scc[a] = [current_node]
-                    for i in scc[current_cc]:
+                        scc.update({a: [current_node]})
+                    current_list = scc.get(current_cc)
+                    for i in current_list:
                         scc[a].append(i)
-                        current = num_connected_components[current_node]
-                        num_connected_components[i] = current
+                        current = num_connected_components.__getitem__(current_node)
+                        num_connected_components.update({i: current})
                 elif a == b:
-                    cc.insert(0, scc[num_connected_components[current_node]])
+                    cc.insert(0, scc[num_connected_components.__getitem__(current_node)])
                     for component in scc[num_connected_components[current_node]]:
-                        scc_from.add(component)
+                        from_scc.add(component)
         return scc[num_connected_components[current_node]]
