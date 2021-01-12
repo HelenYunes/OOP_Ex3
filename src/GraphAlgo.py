@@ -6,7 +6,6 @@ from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
 from src.GraphFrame import GraphFrame
 from src.GraphInterface import GraphInterface
-from src.NodeData import NodeData
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -116,7 +115,7 @@ class GraphAlgo(GraphAlgoInterface):
 
         path = []
         nodes = self.graph.get_all_v()
-        if id1 not in nodes.keys() or id2 not in nodes.keys():
+        if id1 not in nodes or id2 not in nodes:
             return math.inf, None
         if id1 == id2:
             path.append(id2)
@@ -125,7 +124,7 @@ class GraphAlgo(GraphAlgoInterface):
         nodes = self.dijkstra(nodes, id1)
         distance = nodes[id2].get_tag()
         if distance == math.inf:
-            return math.inf, None
+            return math.inf, path
         destination = id2
         while destination != -5:
             next_node = nodes[destination]
@@ -141,21 +140,22 @@ class GraphAlgo(GraphAlgoInterface):
         Notes:
         If the graph is None or id1 is not in the graph, the function should return an empty list []
         """
-        node1 = self.graph.get_all_v().get(id1)
-        count = 0
-        scc1 = []
-        scc = []
-        after_dfs_scc = []
-        if self.graph is None:
-            return scc
-        list_visit = []
-        nodes = self.graph.get_all_v()
-        if id1 not in nodes.keys():
-            return scc
-        self.reset_data(nodes)
-        after_dfs_scc, scc1 = self.dfs_scc(scc, nodes, count, node1, list_visit)
 
-        return scc1
+        scc = set()
+        scc1 = []
+        count = 0
+        cc = []
+        keys = {}
+        num_connected_components = {}
+        nodes = self.graph.get_all_v()
+        scc2 = {}
+        if self.graph is None:
+            return scc1
+        list_visit = []
+        if id1 not in nodes:
+            return scc1
+        scc3 = self.dfs_scc(cc, scc, nodes, count, id1, list_visit, keys, num_connected_components, scc2)
+        return scc3
 
     def connected_components(self) -> List[list]:
         """
@@ -164,20 +164,21 @@ class GraphAlgo(GraphAlgoInterface):
         Notes:
         If the graph is None the function should return an empty list []
         """
-        scc = []
+        scc = set()
         scc1 = []
         count = 0
-        after_dfs_scc = []
+        cc = []
+        num_connected_components = {}
         if self.graph is None:
-            return scc
+            return scc1
         list_visit = []
+        nodes_after_scc = {}
+        scc2 = {}
         nodes = self.graph.get_all_v()
-        self.reset_data(nodes)
-        for node in nodes.values():
-            if node.get_counter() is None:
-                after_dfs_scc, scc1 = self.dfs_scc(scc, nodes, count, node, list_visit)
-
-        return after_dfs_scc
+        for node in nodes:
+            if node not in nodes_after_scc:
+                self.dfs_scc(cc, scc, nodes, count, node, list_visit, nodes_after_scc, num_connected_components, scc2)
+        return cc
 
     def plot_graph(self) -> None:
         """
@@ -200,8 +201,6 @@ class GraphAlgo(GraphAlgoInterface):
             node.set_tag(math.inf)
             node.set_info("no")
             node.set_parent(None)
-            node.set_counter(None)
-            node.set_connected_components(None)
 
     def dijkstra(self, nodes: dict, id1: int) -> list:
         node1 = nodes[id1]
@@ -219,33 +218,48 @@ class GraphAlgo(GraphAlgoInterface):
                     nodes[key].set_parent(vertex.get_key())
         return nodes
 
-    def dfs_scc(self, scc_from: [], nodes: [], count: int, current_node: NodeData, list_visit: []):
-
-        current_key = current_node.get_key()
-        out_edges = self.graph.all_out_edges_of_node(current_key)
-        current_node.set_connected_components(count)
-        current_node.set_counter(count)
-        count += 1
-        scc = []
-        current_node.set_info("yes")
-        list_visit.append(current_node)
-        for vertex in list([nodes[destination]] for destination in out_edges):
-            node = vertex.pop()
-            if node.get_counter() is not None:
-                if node.get_info().__eq__("yes"):
-                    num = min(current_node.get_connected_components(), node.get_counter())
-                    current_node.set_connected_components(num)
-            else:
-                if node.get_counter() is None:
-                    self.dfs_scc(scc_from, nodes, count, node, list_visit)
-                    num = min(current_node.get_connected_components(), node.get_connected_components())
-                    current_node.set_connected_components(num)
-        if current_node.get_connected_components() == current_node.get_counter():
-            while list_visit.__len__() > 0:
-                this_node = list_visit.pop()
-                scc.insert(0, this_node.get_key())
-                this_node.set_info("no")
-                if this_node == current_node:
+    def dfs_scc(self, cc, scc_from, nodes, count: int, current_node, list_visit, nodes_after_scc,
+                num_connected_components, scc):
+        list_visit = [current_node]
+        i = 0
+        while len(list_visit) > 0:
+            current_node = list_visit[len(list_visit) - 1]
+            if current_node not in nodes_after_scc:
+                vertex = nodes.get(current_node)
+                vertex_key = [vertex.get_key()]
+                nodes_after_scc[current_node] = count
+                scc[count] = vertex_key
+                num_connected_components[current_node] = count
+                count = count + 1
+                # print(vertex_key)
+            edges = self.graph.all_out_edges_of_node(current_node)
+            flag_visited = 1
+            iter_edge = iter(edges)
+            for i in edges:
+                if i not in nodes_after_scc:
+                    flag_visited = 0
+                    list_visit.append(i)
                     break
-            scc_from.append(scc)
-        return scc_from, scc
+            if flag_visited == 1:
+                list_visit.pop()
+                current_cc = num_connected_components[current_node]
+                for j in edges:
+                    if j in num_connected_components and j not in scc_from:
+                        a = num_connected_components.__getitem__(current_node)
+                        b = num_connected_components.__getitem__(j)
+                        num_min_connected = min(a, b)
+                        num_connected_components[current_node] = num_min_connected
+                a = num_connected_components.__getitem__(current_node)
+                b = nodes_after_scc.__getitem__(current_node)
+                if a != b:
+                    if a not in scc:
+                        scc[a] = [current_node]
+                    for i in scc[current_cc]:
+                        scc[a].append(i)
+                        current = num_connected_components[current_node]
+                        num_connected_components[i] = current
+                elif a == b:
+                    cc.insert(0, scc[num_connected_components[current_node]])
+                    for component in scc[num_connected_components[current_node]]:
+                        scc_from.add(component)
+        return scc[num_connected_components[current_node]]
