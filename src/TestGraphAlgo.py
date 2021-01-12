@@ -2,7 +2,6 @@ import unittest
 import math
 from src.DiGraph import DiGraph
 from src.GraphAlgo import GraphAlgo
-from src.NodeData import NodeData
 
 
 class TestGraphAlgo(unittest.TestCase):
@@ -28,6 +27,17 @@ class TestGraphAlgo(unittest.TestCase):
         graph = DiGraph()
         return graph
 
+    def test_load_from_json(self):
+        graph_a = GraphAlgo()
+        self.assertTrue(graph_a.load_from_json("../data/A4"))
+        self.assertTrue(graph_a.load_from_json("../data/A0"))
+
+    def test_save_to_json(self):
+        graph = self.build_graph()
+        graph_a = GraphAlgo()
+        GraphAlgo.__init__(graph_a, graph)
+        self.assertTrue(graph_a.save_to_json("check1"))
+
     def test_json(self):
         graph = self.build_graph()
         graph_a = GraphAlgo()
@@ -44,12 +54,9 @@ class TestGraphAlgo(unittest.TestCase):
 
         graph_b = GraphAlgo()
         graph_a = GraphAlgo()
-        self.assertTrue(graph_a.load_from_json("../data/A4"))  # init a GraphAlgo from a json file
+        self.assertTrue(graph_a.load_from_json("../data/A4"))
         self.assertTrue(graph_a.save_to_json("check"))
-        try:
-            self.assertTrue(graph_b.load_from_json("check"))
-        except Exception as e:
-            print("here is the problem: ", e)  # needs to fix save/load method (there is a problem with "pos")
+        self.assertTrue(graph_b.load_from_json("check"))
         self.assertEqual(graph_b.get_graph(), graph_a.get_graph())
 
     def test_shortest_path(self):
@@ -112,6 +119,9 @@ class TestGraphAlgo(unittest.TestCase):
         graph = self.build_graph()
         graph_a = GraphAlgo()
         GraphAlgo.__init__(graph_a, graph)
+        connected = graph_a.connected_components()
+        self.assertEqual(1, len(connected))
+
         connected = graph_a.connected_components().__getitem__(0)
         self.assertEqual(5, len(connected))
 
@@ -120,7 +130,17 @@ class TestGraphAlgo(unittest.TestCase):
         graph_a = GraphAlgo()
         GraphAlgo.__init__(graph_a, graph)
         connected = graph_a.connected_components().__getitem__(0)
+        self.assertEqual(1, len(connected))
+        self.assertTrue(3 in connected)
+        self.assertFalse(2 in connected)
+
+        connected = graph_a.connected_components().__getitem__(1)
         self.assertEqual(4, len(connected))
+        self.assertTrue(1 in connected)
+        self.assertTrue(2 in connected)
+        self.assertTrue(0 in connected)
+        self.assertTrue(4 in connected)
+        self.assertFalse(3 in connected)
 
         graph = self.build_empty_graph()
         GraphAlgo.__init__(graph_a, graph)
