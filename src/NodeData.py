@@ -9,10 +9,6 @@ class NodeData(object):
         self.__info = "no"
         self.__parent = None
         self.__location = pos
-        if pos is not None:
-            self.__x = pos[0]
-            self.__y = pos[1]
-            self.__z = pos[2]
 
     def get_location(self) -> [tuple]:
         return self.__location
