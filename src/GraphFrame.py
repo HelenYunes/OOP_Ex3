@@ -14,7 +14,8 @@ class GraphFrame:
                 list_random_location_nodes.append(node)
         if list_random_location_nodes.__len__() == 0:
             return
-        for node in list_random_location_nodes:
+        for node in list_random_location_nodes:  # if the vertices don't have a location
+            # we set a random location for them
             if node.get_location() is None:
                 node.set_location(random.uniform(0, 7), random.uniform(0, 7), 0)
 
@@ -26,10 +27,11 @@ class GraphFrame:
         for node in self.graph.Nodes.values():
             key = node.get_key()
             keys.append(key)
-            ax.scatter(node.get_location()[0], node.get_location()[1], color="blue", label="Nodes", )
+            ax.scatter(node.get_location()[0], node.get_location()[1], color="blue",
+                       label="Nodes", )  # Drawing the vertices using the position
         for i, txt in enumerate(keys):
             ax.annotate(keys[i], (nodes.get(keys[i]).get_location()[0], nodes.get(keys[i]).get_location()[1]),
-                        color='r')
+                        color='r')  # Drawing the keys of the vertices
 
     def draw_edges(self, ax):
         eps = 0.0001
@@ -40,7 +42,8 @@ class GraphFrame:
                 ax.arrow(node.get_location()[0], node.get_location()[1],
                          self.graph.get_node(edge).get_location()[0] - node.get_location()[0],
                          self.graph.get_node(edge).get_location()[1] - node.get_location()[1], label='Edges',
-                         length_includes_head=True, width=0.00000389, head_width=x_lim * 0.007999, head_length=y_lim * 0.01999)
+                         length_includes_head=True, width=0.00000389, head_width=x_lim * 0.007999,
+                         head_length=y_lim * 0.01999)
 
     def draw_graph(self):
 
