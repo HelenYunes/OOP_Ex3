@@ -61,6 +61,7 @@ class TestDiGraph(unittest.TestCase):
         self.assertIsNotNone(graph.all_in_edges_of_node(1))
         self.assertIn(0, graph.all_in_edges_of_node(1))
         self.assertIn(2, graph.all_in_edges_of_node(1))
+        self.assertEqual({}, graph.all_in_edges_of_node(10))
 
     def test_get_mc(self):
         graph = TestDiGraph.build_graph(self)
@@ -87,6 +88,7 @@ class TestDiGraph(unittest.TestCase):
         graph.remove_edge(1, 2)
         self.assertNotIn(1, graph.all_out_edges_of_node(1))
         self.assertEqual({}, graph.all_out_edges_of_node(1))
+        self.assertEqual({}, graph.all_in_edges_of_node(10))
 
     def test_add_edge(self):
         graph = TestDiGraph.build_graph(self)
