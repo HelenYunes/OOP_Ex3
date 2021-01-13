@@ -120,16 +120,16 @@ class GraphAlgo(GraphAlgoInterface):
         if id1 == id2:
             path.append(id2)
             return 0, path
-        self.reset_data(nodes)
+        self.reset_data(nodes)  # set distance to inf & mark all nodes unvisited
         nodes = self.dijkstra(nodes, id1)
         distance = nodes[id2].get_tag()
         if distance == math.inf:
             return math.inf, path
         destination = id2
-        while destination != -5:
+        while destination != -5:  # while we haven't reached to id1 (source node)
             next_node = nodes[destination]
             destination = next_node.get_parent()
-            path.insert(0, next_node.get_key())
+            path.insert(0, next_node.get_key())  # put the next vertex in the path
         return nodes[id2].get_tag(), path
 
     def connected_component(self, id1: int) -> list:
@@ -197,6 +197,8 @@ class GraphAlgo(GraphAlgoInterface):
         return False
 
     def reset_data(self, nodes):
+        """ set distance of the nodes to inf,
+        set parent of the nodes to none & mark all nodes unvisited"""
         for node in nodes.values():
             node.set_tag(math.inf)
             node.set_info("no")
@@ -207,24 +209,26 @@ class GraphAlgo(GraphAlgoInterface):
         node1.set_parent(-5)
         queue = PriorityQueue()
         queue.put(node1)
-        node1.set_tag(0)
+        node1.set_tag(0)  # set distance to zero
         while not (queue.empty()):
             vertex = queue.get()
             edges_out = self.graph.all_out_edges_of_node(vertex.get_key())
-            for key, weight in edges_out.items():
+            for key, weight in edges_out.items():  # check all of current node unvisited neighbours
+                # and calculate their distances from the current node.
+                # Compare the newly calculated distance to the current
                 if vertex.get_tag() + weight < nodes[key].get_tag():
                     queue.put(nodes[key])
-                    nodes[key].set_tag(vertex.get_tag() + weight)
+                    nodes[key].set_tag(vertex.get_tag() + weight)  # assign the smaller distance
                     nodes[key].set_parent(vertex.get_key())
         return nodes
 
     def dfs_scc(self, cc, from_scc, nodes, count: int, current_node, list_visit, nodes_after_scc,
                 num_connected_components, scc):
-        list_visit = [current_node]
+        list_visit = [current_node]  # putting current_node in the list_visit
         i = 0
-       
+
         while len(list_visit) > 0:
-            current_node = list_visit[len(list_visit) - 1]
+            current_node = list_visit[len(list_visit) - 1]  # we visit the node at the back of list_visit
             if current_node in nodes_after_scc:
                 pass
             else:
@@ -234,23 +238,25 @@ class GraphAlgo(GraphAlgoInterface):
                 scc.update({count: vertex_key})
                 num_connected_components.update({current_node: count})
                 count = count + 1
-
                 # print(vertex_key)
-            edges = self.graph.all_out_edges_of_node(current_node)
+            edges = self.graph.all_out_edges_of_node(current_node)  # and go to its adjacent nodes
             flag_visited = 1
             iter_edge = iter(edges)
-            for i in edges:
+            for i in edges:  # check if adjacent nodes has already been visited.
                 if i not in nodes_after_scc:
                     flag_visited = 0
-                    list_visit.append(i)
+                    list_visit.append(i)  # if vertex i unvisited we add the vertex to list_visit and visit it.
                     break
-            if flag_visited == 1:
+            if flag_visited == 1:  # After we visit the all the reachable adjacent nodes
+                # the current node doesn't have any unvisited adjacent nodes
                 list_visit.pop()
                 current_cc = num_connected_components.__getitem__(current_node)
                 for j in edges:
                     if j in num_connected_components and j not in from_scc:
-                        a = num_connected_components.__getitem__(current_node)
-                        b = num_connected_components.__getitem__(j)
+                        a = num_connected_components.__getitem__(current_node)  # stores the lowest dfs_num
+                        # reachable which is not the part of another scc
+                        b = num_connected_components.__getitem__(j)  # is the value of the counter when the node
+                        # explored for the first time
                         num_min_connected = min(a, b)
                         num_connected_components.update({current_node: num_min_connected})
                 a = num_connected_components.__getitem__(current_node)
@@ -263,8 +269,10 @@ class GraphAlgo(GraphAlgoInterface):
                         scc[a].append(i)
                         current = num_connected_components.__getitem__(current_node)
                         num_connected_components.update({i: current})
-                elif a == b:
-                    cc.insert(0, scc[num_connected_components.__getitem__(current_node)])
+                elif a == b:  # if node is encountered with dfs_low(current_node) == dfs_num(current_node)
+                    # is the first explored node in its strongly connected component and all the nodes above it
+                    # in the list_visited are popped out then assigned the appropriate scc.
+                    cc.append(scc[num_connected_components.__getitem__(current_node)])
                     for component in scc[num_connected_components[current_node]]:
                         from_scc.add(component)
         return scc[num_connected_components[current_node]]
