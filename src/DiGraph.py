@@ -38,12 +38,16 @@ class DiGraph(GraphInterface):
         """return a dictionary of all the nodes connected to (into) node_id ,
         each node is represented using a pair (other_node_id, weight)
          """
+        if id1 not in self.Nodes:
+            return {}
         return self.Edges_in.get(id1)
 
     def all_out_edges_of_node(self, id1: int) -> dict:
         """return a dictionary of all the nodes connected from node_id , each node is represented using a pair
         (other_node_id, weight)
         """
+        if id1 not in self.Nodes:
+            return {}
         return self.Edges_out.get(id1)
 
     def get_mc(self) -> int:
