@@ -20,8 +20,15 @@ class GraphFrame:
 
     def draw_nodes(self, ax):
         self.set_random_nodes()
+        nodes = self.graph.get_all_v()
+        keys = []
         for node in self.graph.Nodes.values():
-            ax.scatter(node.get_location()[0], node.get_location()[1], color="blue", label=node.__repr__())
+            key = node.get_key()
+            keys.append(key)
+            ax.scatter(node.get_location()[0], node.get_location()[1], color="blue", label="Nodes", )
+        for i, txt in enumerate(keys):
+            ax.annotate(keys[i], (nodes.get(keys[i]).get_location()[0], nodes.get(keys[i]).get_location()[1]),
+                        color='r')
 
     def draw_edges(self, ax):
         eps = 0.0001
@@ -34,7 +41,7 @@ class GraphFrame:
 
     def draw_graph(self):
 
-        plot_graph.figure(figsize=(13, 7), facecolor="#5a7d9a")
+        plot_graph.figure(figsize=(11, 6), facecolor="#5a7d9a")
         ax = plot_graph.axes()
         plot_graph.title("Here is a graphic presentation of the graph:", color="w")
         plot_graph.xlabel("x")
