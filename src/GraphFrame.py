@@ -22,6 +22,7 @@ class GraphFrame:
         self.set_random_nodes()
         nodes = self.graph.get_all_v()
         keys = []
+
         for node in self.graph.Nodes.values():
             key = node.get_key()
             keys.append(key)
@@ -32,12 +33,14 @@ class GraphFrame:
 
     def draw_edges(self, ax):
         eps = 0.0001
+        x_lim = ax.get_xlim()[1] - ax.get_xlim()[0]
+        y_lim = ax.get_ylim()[1] - ax.get_ylim()[0]
         for node in self.graph.Nodes.values():
             for edge in self.graph.all_out_edges_of_node(node.get_key()).keys():
                 ax.arrow(node.get_location()[0], node.get_location()[1],
                          self.graph.get_node(edge).get_location()[0] - node.get_location()[0],
                          self.graph.get_node(edge).get_location()[1] - node.get_location()[1], label='Edges',
-                         length_includes_head=True, width=0.00000389, head_width=0.000089999, head_length=0.000299974)
+                         length_includes_head=True, width=0.00000389, head_width=x_lim * 0.007999, head_length=y_lim * 0.01999)
 
     def draw_graph(self):
 
