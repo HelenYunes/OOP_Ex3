@@ -4,6 +4,12 @@ import random
 
 
 class GraphFrame:
+    """
+    This class plots the graph.
+    If the nodes have a position, the nodes will be placed there.
+    Otherwise, they will be placed in a random but elegant manner.
+  
+    """
     def __init__(self, graph: DiGraph):
         self.graph = graph
 
