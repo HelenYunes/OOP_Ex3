@@ -83,7 +83,7 @@ class TestGraphAlgo(unittest.TestCase):
         path_len = graph_a.shortest_path(1, 50).__getitem__(0)
         path_list = graph_a.shortest_path(1, 50).__getitem__(1)
         self.assertEqual(math.inf, path_len)
-        assert path_list is None
+        self.assertEqual([], path_list)
 
     def test_connected_component(self):
         graph = self.build_graph()
@@ -129,12 +129,12 @@ class TestGraphAlgo(unittest.TestCase):
         graph.remove_edge(2, 3)
         graph_a = GraphAlgo()
         GraphAlgo.__init__(graph_a, graph)
-        connected = graph_a.connected_components().__getitem__(0)
+        connected = graph_a.connected_components().__getitem__(1)
         self.assertEqual(1, len(connected))
         self.assertTrue(3 in connected)
         self.assertFalse(2 in connected)
 
-        connected = graph_a.connected_components().__getitem__(1)
+        connected = graph_a.connected_components().__getitem__(0)
         self.assertEqual(4, len(connected))
         self.assertTrue(1 in connected)
         self.assertTrue(2 in connected)
