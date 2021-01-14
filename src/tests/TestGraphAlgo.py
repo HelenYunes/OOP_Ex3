@@ -29,8 +29,8 @@ class TestGraphAlgo(unittest.TestCase):
 
     def test_load_from_json(self):
         graph_a = GraphAlgo()
-        self.assertTrue(graph_a.load_from_json("../data/A4"))
-        self.assertTrue(graph_a.load_from_json("../data/A0"))
+        self.assertTrue(graph_a.load_from_json("../../data/A4"))
+        self.assertTrue(graph_a.load_from_json("../../data/A0"))
 
     def test_save_to_json(self):
         graph = self.build_graph()
@@ -54,7 +54,7 @@ class TestGraphAlgo(unittest.TestCase):
 
         graph_b = GraphAlgo()
         graph_a = GraphAlgo()
-        self.assertTrue(graph_a.load_from_json("../data/A4"))
+        self.assertTrue(graph_a.load_from_json("../../data/A4"))
         self.assertTrue(graph_a.save_to_json("check"))
         self.assertTrue(graph_b.load_from_json("check"))
         self.assertEqual(graph_b.get_graph(), graph_a.get_graph())
@@ -148,5 +148,5 @@ class TestGraphAlgo(unittest.TestCase):
 
     def test_plot_graph(self):
         graph_a = GraphAlgo()
-        graph_a.load_from_json('../data/A5')
+        graph_a.load_from_json('../../data/A5')
         graph_a.plot_graph()
