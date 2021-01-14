@@ -3,11 +3,16 @@ This project consists of three parts.
 In the first and second parts of this project we built the data structure of weighted directed graph and implemented algorithms on this graph, including:
 1.Finding the shortest path between source to destination - using dijkstra algorithm
 ![Dijkstra algorithm](https://steemitimages.com/0x0/https://i.imgur.com/dWtprX5.gif)
+
 2. Finding all strongly connected components in the graph and finding strongly connected component of a node - using Tarjan's strongly.
+
 ![Tarjan's algorithm](https://www.programming-algorithms.net/image/id/44234)
+
 3. Save (file) - saves the graph in JSON format to a file and load (file) - loads a graph from a json file.
 4. plot graph - implemented by using matplotlib.
+
 ![An example of our plot graph implementation](https://i.imgur.com/TvBkLxS.jpeg)
+
 In the third part of this project we will be comparing runtimes for our graph related libraries.
 We will be comparing what we coded with Python and previously with Java to the Python library Networkx.
 The methods we're about to compare in this project are all ran on the same six Directed Weighted Graphs and these methods are:
