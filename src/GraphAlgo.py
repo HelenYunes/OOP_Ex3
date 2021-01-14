@@ -130,7 +130,7 @@ class GraphAlgo(GraphAlgoInterface):
             next_node = nodes[destination]
             destination = next_node.get_parent()
             path.insert(0, next_node.get_key())  # put the next vertex in the path
-        return nodes[id2].get_tag(), path
+        return distance, path
 
     def connected_component(self, id1: int) -> list:
         """
