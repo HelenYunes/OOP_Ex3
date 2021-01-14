@@ -2,7 +2,7 @@
 This project consists of three parts.
 In the first and second parts of this project we built the data structure of weighted directed graph and implemented algorithms on this graph, including:
 
-1.Finding the shortest path between source to destination - using dijkstra algorithm
+1.Finding the shortest path between source and destination - using dijkstra algorithm
 
 ![Dijkstra algorithm](https://steemitimages.com/0x0/https://i.imgur.com/dWtprX5.gif)
 
