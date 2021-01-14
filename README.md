@@ -2,11 +2,12 @@
 This project consists of three parts.
 In the first and second parts of this project we built the data structure of weighted directed graph and implemented algorithms on this graph, including:
 1.Finding the shortest path between source to destination - using dijkstra algorithm
+
 ![Dijkstra algorithm](https://steemitimages.com/0x0/https://i.imgur.com/dWtprX5.gif)
 
 2. Finding all strongly connected components in the graph and finding strongly connected component of a node - using Tarjan's strongly.
 
-![Tarjan's algorithm](https://www.programming-algorithms.net/image/id/44234)
+![Tarjan's algorithm](https://codeforces.com/predownloaded/8d/be/8dbe5d89e58b67f3d8e4d8e0e8eb3358ba921b28.png)
 
 3. Save (file) - saves the graph in JSON format to a file and load (file) - loads a graph from a json file.
 4. plot graph - implemented by using matplotlib.
