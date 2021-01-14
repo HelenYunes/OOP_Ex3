@@ -6,7 +6,7 @@ In the first and second parts of this project we built the data structure of wei
 
 ![Dijkstra algorithm](https://steemitimages.com/0x0/https://i.imgur.com/dWtprX5.gif)
 
-2. Finding all strongly connected components in the graph and finding strongly connected component of a node - using Tarjan's strongly.
+2. Finding all strongly connected components in the graph and finding strongly connected component of a node - using tarjan's strongly algorithm.
 
 ![Tarjan's algorithm](https://codeforces.com/predownloaded/8d/be/8dbe5d89e58b67f3d8e4d8e0e8eb3358ba921b28.png)
 
