@@ -45,7 +45,7 @@ class TestDiGraph(unittest.TestCase):
         nodes = graph.get_all_v()
         number_nodes = graph.v_size()
         for i in range(number_nodes):
-            self.assertIn(i,  nodes)
+            self.assertIn(i, nodes)
         self.assertEqual(5, nodes.__len__())
         graph.add_node(5)
         self.assertTrue(5 in nodes)
@@ -76,6 +76,17 @@ class TestDiGraph(unittest.TestCase):
         graph.remove_edge(0, 4)
         new_mode_counter = graph.get_mc()
         self.assertNotEqual(mode_counter, new_mode_counter)
+        mode_counter = graph.get_mc()
+        graph.add_edge(0, 4, 10)
+        new_mode_counter = graph.get_mc()
+        self.assertEqual(mode_counter + 1, new_mode_counter)
+        graph.add_edge(0, 4, 5)
+        graph.add_edge(0, 4, 8)
+        graph.add_node(2)
+        graph.add_node(3)
+        self.assertEqual(new_mode_counter, graph.get_mc())
+        graph.add_node(6)
+        self.assertEqual(new_mode_counter+1, graph.get_mc())
 
     def test_all_out_edges_of_node(self):
         graph = TestDiGraph.build_graph(self)
